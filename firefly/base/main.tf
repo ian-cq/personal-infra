@@ -6,7 +6,7 @@ terraform {
     }
     fireflyiii = {
       source  = "terraform.quanianitis.com/ian-cq/firefly-iii"
-      version = ">= 0.6.0"
+      version = ">= 0.6"
     }
   }
 
@@ -22,7 +22,7 @@ provider "onepassword" {
 }
 
 provider "fireflyiii" {
-  base_url = var.firefly_base_url
+  base_url = "https://firefly.api.quanianitis.com"
   token    = sensitive(one(flatten([for s in data.onepassword_item.shared_homelab_secrets.section : [for f in s.field : f.value if f.label == "firefly-pat-token"]])))
   extra_headers = {
     "X-API-Key" = sensitive(one(flatten([for s in data.onepassword_item.gateway_homelab_auth.section : [for f in s.field : f.value if f.label == "apikey-gateway"]])))

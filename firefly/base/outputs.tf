@@ -7,12 +7,12 @@ output "rytbank" {
   }
 }
 
-output "maybank_savings" {
+output "maybank" {
   description = "Maybank Savings asset account."
   value = {
-    id   = fireflyiii_account.maybank_savings.id
-    name = fireflyiii_account.maybank_savings.name
-    type = fireflyiii_account.maybank_savings.type
+    id   = fireflyiii_account.maybank.id
+    name = fireflyiii_account.maybank.name
+    type = fireflyiii_account.maybank.type
   }
 }
 

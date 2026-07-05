@@ -1,68 +1,77 @@
-# Baseline accounts for personal-finance tracking in Firefly III.
-#
-# Naming convention: human-readable names, no prefix — Firefly's UI
-# is the primary consumer. Renames on `name` are safe (no
-# replacement). `type` and `account_role` changes force replacement,
-# so those are the load-bearing fields.
-#
-# Currency is set via var.default_currency so re-denominating the
-# whole set is a one-line change. Note: Firefly *replaces* an account
-# when its currency changes (opening-balance semantics diverge), so a
-# denomination change will destroy history-bearing accounts. Plan and
-# review the diff first.
-
-# --- Asset accounts ----------------------------------------------------
-
-resource "fireflyiii_account" "checking" {
-  name          = "Checking"
+resource "fireflyiii_account" "rytbank" {
+  name          = "RytBank"
   type          = "asset"
   account_role  = "defaultAsset"
   currency_code = var.default_currency
-  notes         = "Primary day-to-day bank account. Salary lands here."
+  notes         = <<-EOT
+    Ryt Bank (Sea Group) — digital-first daily driver. Funded by a
+    payday sweep from Maybank Savings. Day-to-day spending, TNG
+    reloads, and UOB credit-card payoff all originate here.
+  EOT
 }
 
-resource "fireflyiii_account" "savings" {
-  name          = "Savings"
+resource "fireflyiii_account" "maybank_savings" {
+  name          = "Maybank Savings"
   type          = "asset"
   account_role  = "savingAsset"
   currency_code = var.default_currency
-  notes         = "Emergency fund + short-term savings."
+  notes         = <<-EOT
+    Maybank savings account — payroll landing zone (employer credits
+    salary here). On payday, sweep the month's spending budget to
+    RytBank; residual stays put as emergency fund + car down-payment
+    build-up. Tag inbound salary transfers earmarked for the car
+    goal with `car-fund`. Not touched for daily spend.
+  EOT
 }
 
-resource "fireflyiii_account" "cash_wallet" {
-  name          = "Cash Wallet"
+resource "fireflyiii_account" "tng_ewallet" {
+  name          = "TNG eWallet"
   type          = "asset"
   account_role  = "cashWalletAsset"
   currency_code = var.default_currency
-  notes         = "Physical cash on hand."
+  notes         = <<-EOT
+    Touch 'n Go eWallet — tolls (SmartTAG / RFID reload), parking,
+    small-ticket F&B, DuitNow QR payments. Reloaded from RytBank.
+  EOT
 }
 
-resource "fireflyiii_account" "credit_card" {
-  name                 = "Credit Card"
+resource "fireflyiii_account" "uob_credit" {
+  name                 = "UOB Credit"
   type                 = "asset"
   account_role         = "ccAsset"
   credit_card_type     = "monthlyFull"
-  monthly_payment_date = "2026-01-01"
+  monthly_payment_date = "2026-01-15"
   currency_code        = var.default_currency
-  notes                = "Monthly-full credit card. Statement paid off from Checking every cycle."
+  notes                = <<-EOT
+    UOB credit card — monthlyFull, statement paid in full every
+    cycle from RytBank. Statement cycle placeholder 15th; adjust
+    monthly_payment_date once the real cycle date is confirmed
+    (in-place update, not replacement).
+  EOT
 }
-
-# --- Revenue accounts --------------------------------------------------
-#
-# In Firefly, revenue accounts are the *sources* of income (employer,
-# clients, etc). Transactions land in an asset account and are
-# categorised by the revenue account they came from.
 
 resource "fireflyiii_account" "salary" {
   name          = "Salary"
   type          = "revenue"
   currency_code = var.default_currency
-  notes         = "Employer payroll."
+  notes         = <<-EOT
+    Employer payroll. Net-of-EPF/SOCSO/EIS/PCB, i.e. take-home MYR
+    landing in Maybank Savings on payday (employer requires a
+    Maybank account for payroll). From there a monthly sweep funds
+    RytBank; residual stays in Maybank as emergency fund + car-fund
+    build-up. Statutory deductions are already withheld upstream and
+    are not modelled as separate transactions (LHDN Form BE at year
+    end reconciles gross vs. relief).
+  EOT
 }
 
 resource "fireflyiii_account" "reimbursements" {
   name          = "Reimbursements"
   type          = "revenue"
   currency_code = var.default_currency
-  notes         = "Expense reimbursements from employer / clients / friends."
+  notes         = <<-EOT
+    Expense reimbursements from employer, clients, or friends. Pair
+    with the `reimbursable` → `reimbursed` tag transition on the
+    originating expense so the round-trip is auditable.
+  EOT
 }

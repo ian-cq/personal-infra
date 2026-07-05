@@ -4,11 +4,8 @@ variable "firefly_base_url" {
   default     = "https://firefly.api.quanianitis.com"
 }
 
-# Default currency for all accounts + budget limits declared in this
-# module. Change here to re-denominate every asset/revenue account at
-# once (Firefly forces replacement on currency changes; plan carefully).
 variable "default_currency" {
   type        = string
-  description = "ISO 4217 currency code used as the default for asset and revenue accounts."
+  description = "ISO 4217 currency code used as the default for asset and revenue accounts. Firefly forces replacement (destroy + recreate) on account currency changes, so re-denominating destroys history — migrate transactions first."
   default     = "MYR"
 }

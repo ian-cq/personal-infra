@@ -12,8 +12,8 @@ provider "onepassword" {
 
 provider "fireflyiii" {
   base_url = var.firefly_base_url
-  token    = data.onepassword_item.firefly_pat_token.password
+  token    = sensitive(one(flatten([for s in data.onepassword_item.shared_homelab_secrets.section : [for f in s.field : f.value if f.label == "firefly-pat-token"]])))
   extra_headers = {
-    "X-API-Key" = data.onepassword_item.gateway_homelab_auth.password
+    "X-API-Key" = sensitive(one(flatten([for s in data.onepassword_item.gateway_homelab_auth.section : [for f in s.field : f.value if f.label == "apikey-gateway"]])))
   }
 }

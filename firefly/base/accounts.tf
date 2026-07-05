@@ -50,6 +50,20 @@ resource "fireflyiii_account" "uob_credit" {
   EOT
 }
 
+resource "fireflyiii_account" "maybank_credit" {
+  name                 = "Maybank Credit"
+  type                 = "asset"
+  account_role         = "ccAsset"
+  credit_card_type     = "monthlyFull"
+  monthly_payment_date = "2026-01-15"
+  currency_code        = var.default_currency
+  notes                = <<-EOT
+    Maybank credit card — monthlyFull, statement paid in full every
+    cycle from RytBank. Statement cycle placeholder 15th; adjust
+    monthly_payment_date once the real cycle date is confirmed.
+  EOT
+}
+
 resource "fireflyiii_account" "salary" {
   name          = "Salary"
   type          = "revenue"
